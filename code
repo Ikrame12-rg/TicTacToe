@@ -1,0 +1,125 @@
+using System;
+
+class TicTacToe
+{
+    static char[] board = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+    static char currentPlayer = 'X';
+
+    static void Main()
+    {
+        Game game = new Game();
+
+        while (!game.IsGameOver())
+        {
+            game.DisplayBoard();
+            game.TakePlayerTurn();
+            game.SwitchPlayer();
+        }
+
+        game.DisplayResult();
+    }
+}
+
+class Game
+{
+    private char[] board;
+    private char currentPlayer;
+
+    public Game()
+    {
+        board = new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+        currentPlayer = 'X';
+    }
+
+    public void DisplayBoard()
+    {
+        Console.Clear();
+        Console.WriteLine("Tic Tac Toe\n");
+
+        Console.WriteLine($" {board[0]} | {board[1]} | {board[2]} ");
+        Console.WriteLine("---|---|---");
+        Console.WriteLine($" {board[3]} | {board[4]} | {board[5]} ");
+        Console.WriteLine("---|---|---");
+        Console.WriteLine($" {board[6]} | {board[7]} | {board[8]} ");
+        Console.WriteLine("\n");
+    }
+
+    public void TakePlayerTurn()
+    {
+        Console.WriteLine($"Player {currentPlayer}'s turn. Enter a position (1-9): ");
+        int position = int.Parse(Console.ReadLine()) - 1;
+
+        if (IsValidMove(position))
+        {
+            board[position] = currentPlayer;
+        }
+        else
+        {
+            Console.WriteLine("Invalid move. Try again.");
+            TakePlayerTurn();
+        }
+    }
+
+    private bool IsValidMove(int position)
+    {
+        return position >= 0 && position < 9 && board[position] != 'X' && board[position] != 'O';
+    }
+
+    public void SwitchPlayer()
+    {
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+    }
+
+    public bool IsGameOver()
+    {
+        return CheckForWin() || CheckForDraw();
+    }
+
+    private bool CheckForWin()
+    {
+        // Check rows, columns, and diagonals for a win
+        return (CheckRow(0) || CheckRow(1) || CheckRow(2) ||
+                CheckColumn(0) || CheckColumn(1) || CheckColumn(2) ||
+                CheckDiagonal());
+    }
+
+    private bool CheckRow(int row)
+    {
+        return board[row * 3] == currentPlayer &&
+               board[row * 3 + 1] == currentPlayer &&
+               board[row * 3 + 2] == currentPlayer;
+    }
+
+    private bool CheckColumn(int col)
+    {
+        return board[col] == currentPlayer &&
+               board[col + 3] == currentPlayer &&
+               board[col + 6] == currentPlayer;
+    }
+
+    private bool CheckDiagonal()
+    {
+        return (board[0] == currentPlayer && board[4] == currentPlayer && board[8] == currentPlayer) ||
+               (board[2] == currentPlayer && board[4] == currentPlayer && board[6] == currentPlayer);
+    }
+
+    private bool CheckForDraw()
+    {
+        // Check if all positions are filled and nobody has won
+        return !board.Contains('1', '2', '3', '4', '5', '6', '7', '8', '9');
+    }
+
+    public void DisplayResult()
+    {
+        DisplayBoard();
+
+        if (CheckForWin())
+        {
+            Console.WriteLine($"Player {currentPlayer} wins!");
+        }
+        else
+        {
+            Console.WriteLine("It's a draw!");
+        }
+    }
+}
